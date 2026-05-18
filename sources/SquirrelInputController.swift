@@ -195,6 +195,9 @@ final class SquirrelInputController: IMKInputController {
       client?.overrideKeyboard(withKeyboardNamed: keyboardLayout)
     }
     preedit = ""
+    if session != 0 {
+      NSApp.squirrelAppDelegate.updateStatusBar(for: session)
+    }
   }
 
   override init!(server: IMKServer!, delegate: Any!, client: Any!) {
@@ -371,6 +374,7 @@ private extension SquirrelInputController {
         rimeAPI.set_option(session, key, value)
       }
     }
+    NSApp.squirrelAppDelegate.updateStatusBar(for: session)
   }
 
   func destroySession() {

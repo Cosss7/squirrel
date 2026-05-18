@@ -99,6 +99,11 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
     NSWorkspace.shared.open(Self.rimeWikiURL)
   }
 
+  func updateStatusBar(for session: RimeSessionId) {
+    let asciiMode = rimeAPI.get_option(session, "ascii_mode")
+    statusBarManager.updateStatus(text: asciiMode ? "A" : "中")
+  }
+
   static func showMessage(msgText: String?) {
     let center = UNUserNotificationCenter.current()
     center.requestAuthorization(options: [.alert, .provisional]) { _, error in
