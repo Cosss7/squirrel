@@ -361,6 +361,7 @@ private extension SquirrelInputController {
 
     if session != 0 {
       updateAppOptions()
+      NSApp.squirrelAppDelegate.updateStatusBar(for: session)
     }
   }
 
@@ -374,7 +375,6 @@ private extension SquirrelInputController {
         rimeAPI.set_option(session, key, value)
       }
     }
-    NSApp.squirrelAppDelegate.updateStatusBar(for: session)
   }
 
   func destroySession() {
@@ -558,6 +558,9 @@ private extension SquirrelInputController {
       _ = rimeAPI.free_context(&ctx)
     } else {
       hidePalettes()
+    }
+    if session != 0 {
+      NSApp.squirrelAppDelegate.updateStatusBar(for: session)
     }
   }
 
