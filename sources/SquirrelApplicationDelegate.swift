@@ -174,6 +174,8 @@ final class SquirrelApplicationDelegate: NSObject, NSApplicationDelegate, SPUSta
     if let panel = panel, let config = self.config {
       panel.load(config: config, forDarkMode: false)
       panel.load(config: config, forDarkMode: true)
+      let showStatusWhen = config.getString("show_status_when")
+      panel.statusMode = (showStatusWhen == "active") ? .active : .transient
     }
   }
 

@@ -19,6 +19,13 @@ final class SquirrelPanel: NSPanel {
   private var statusMessage: String = ""
   private var statusTimer: Timer?
 
+  enum StatusMode {
+    case transient
+    case active
+  }
+  var statusMode: StatusMode = .transient
+  private var currentStatusMessage: String = ""
+
   private var preedit: String = ""
   private var selRange: NSRange = .empty
   private var caretPos: Int = 0
@@ -175,11 +182,21 @@ final class SquirrelPanel: NSPanel {
       statusTimer?.invalidate()
       statusTimer = nil
     } else {
-      if !statusMessage.isEmpty {
-        show(status: statusMessage)
-        statusMessage = ""
-      } else if statusTimer == nil {
-        hide()
+      if statusMode == .active {
+        // active 模式：有状态就恢复显示，没有则隐藏
+        if !currentStatusMessage.isEmpty {
+          show(status: currentStatusMessage)
+        } else if statusTimer == nil {
+          hide()
+        }
+      } else {
+        // transient 模式：保持原有逻辑
+        if !statusMessage.isEmpty {
+          show(status: statusMessage)
+          statusMessage = ""
+        } else if statusTimer == nil {
+          hide()
+        }
       }
       return
     }
@@ -313,6 +330,7 @@ final class SquirrelPanel: NSPanel {
         statusMessage = ""
       }
     }
+    currentStatusMessage = statusMessage
   }
 
   func load(config: SquirrelConfig, forDarkMode isDark: Bool) {
@@ -322,6 +340,12 @@ final class SquirrelPanel: NSPanel {
     } else {
       view.lightTheme = SquirrelTheme()
       view.lightTheme.load(config: config, dark: isDark)
+    }
+  }
+
+  func showCurrentStatus() {
+    if !currentStatusMessage.isEmpty {
+      show(status: currentStatusMessage)
     }
   }
 }
@@ -554,8 +578,12 @@ private extension SquirrelPanel {
     show()
 
     statusTimer?.invalidate()
-    statusTimer = Timer.scheduledTimer(withTimeInterval: SquirrelTheme.showStatusDuration, repeats: false) { _ in
-      self.hide()
+    statusTimer = nil
+
+    if statusMode == .transient {
+      statusTimer = Timer.scheduledTimer(withTimeInterval: SquirrelTheme.showStatusDuration, repeats: false) { _ in
+        self.hide()
+      }
     }
   }
 

@@ -195,8 +195,17 @@ final class SquirrelInputController: IMKInputController {
       client?.overrideKeyboard(withKeyboardNamed: keyboardLayout)
     }
     preedit = ""
-    if session != 0 {
-      NSApp.squirrelAppDelegate.updateStatusBar(for: session)
+
+    // active 模式下，切换到输入框时显示当前中英文状态
+    if let panel = NSApp.squirrelAppDelegate.panel, panel.statusMode == .active,
+       session != 0 {
+      let asciiMode = rimeAPI.get_option(session, "ascii_mode")
+      let stateLabelLong = rimeAPI.get_state_label_abbreviated(session, "ascii_mode", asciiMode, false)
+      let stateLabelShort = rimeAPI.get_state_label_abbreviated(session, "ascii_mode", asciiMode, true)
+      let longLabel = stateLabelLong.str.map { String(cString: $0) }
+      let shortLabel = stateLabelShort.str.map { String(cString: $0) }
+      panel.updateStatus(long: longLabel ?? "", short: shortLabel ?? "")
+      panel.showCurrentStatus()
     }
   }
 

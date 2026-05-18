@@ -15,6 +15,11 @@ chord_duration: 0.1  # seconds
 # options: always | never | appropriate
 show_notifications_when: appropriate
 
+# 状态提示显示模式
+# transient: 切换后短暂显示（默认，现有行为）
+# active: 输入法激活期间常驻显示
+show_status_when: transient
+
 style:
   color_scheme: native
   # Optional: define both light and dark color schemes to match system appearance
